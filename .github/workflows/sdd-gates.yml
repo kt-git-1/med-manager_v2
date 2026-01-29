@@ -1,0 +1,33 @@
+name: SDD Gates
+
+on:
+  pull_request:
+  push:
+    branches: ["main", "master"]
+
+jobs:
+  needs-clarification-gate:
+    name: Fail if NEEDS CLARIFICATION remains
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check [NEEDS CLARIFICATION] in specs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ ! -d "specs" ]; then
+            echo "specs/ directory not found. (Gate skipped)"
+            exit 0
+          fi
+
+          echo "Searching for [NEEDS CLARIFICATION] under specs/ ..."
+          if grep -R --line-number --fixed-string "[NEEDS CLARIFICATION]" specs/; then
+            echo ""
+            echo "❌ Gate failed: Resolve all [NEEDS CLARIFICATION] before merging."
+            exit 1
+          else
+            echo "✅ Gate passed: No [NEEDS CLARIFICATION] found."
+          fi
