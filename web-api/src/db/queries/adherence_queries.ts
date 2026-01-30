@@ -7,7 +7,7 @@ export type AdherenceDose = {
   doseId: string;
   medicationId: string;
   scheduledAt: string; // ISO
-  event?: { adherenceEventId: string; status: "TAKEN"; takenAt: string; actor: { type: ActorType; userId: string } };
+  event: { adherenceEventId: string; status: "TAKEN"; takenAt: string; actor: { type: ActorType; userId: string } } | null;
 };
 
 export type TodayResponse = {
@@ -65,16 +65,16 @@ class InMemoryAdherenceQueries {
     [
       "2026-01-30",
       [
-        { doseId: "dose_001", medicationId: "med_001", scheduledAt: "2026-01-30T08:00:00.000Z" },
-        { doseId: "dose_002", medicationId: "med_001", scheduledAt: "2026-01-30T20:00:00.000Z" },
-        { doseId: "dose_003", medicationId: "med_002", scheduledAt: "2026-01-30T09:00:00.000Z" },
+        { doseId: "dose_001", medicationId: "med_001", scheduledAt: "2026-01-30T08:00:00.000Z", event: null },
+        { doseId: "dose_002", medicationId: "med_001", scheduledAt: "2026-01-30T20:00:00.000Z", event: null },
+        { doseId: "dose_003", medicationId: "med_002", scheduledAt: "2026-01-30T09:00:00.000Z", event: null },
       ],
     ],
     [
       "2026-01-29",
       [
-        { doseId: "dose_004", medicationId: "med_001", scheduledAt: "2026-01-29T08:00:00.000Z" },
-        { doseId: "dose_005", medicationId: "med_003", scheduledAt: "2026-01-29T12:00:00.000Z" },
+        { doseId: "dose_004", medicationId: "med_001", scheduledAt: "2026-01-29T08:00:00.000Z", event: null },
+        { doseId: "dose_005", medicationId: "med_003", scheduledAt: "2026-01-29T12:00:00.000Z", event: null },
       ],
     ],
   ]);
