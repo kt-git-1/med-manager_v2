@@ -27,7 +27,7 @@
     - [ ] Includes history sort + cursor binding semantics (scheduledAt DESC + id DESC)
 
 ### 1.2 Web-api test scaffolding (tests only)
-- [ ] T002 Add/confirm test scaffolding for contract/integration tests  
+- [x] T002 Add/confirm test scaffolding for contract/integration tests  
   - Files:
     - `web-api/tests/contract/*`
     - `web-api/tests/integration/*`
@@ -37,7 +37,7 @@
     - [ ] can run `contract` and `integration` suites separately (tags or folders)
 
 ### 1.3 Contract tests (web-api)
-- [ ] T003 [P] [US1] Contract test: POST /adherence/taken (patient)  
+- [x] T003 [P] [US1] Contract test: POST /adherence/taken (patient)  
   - Files:
     - `web-api/tests/contract/adherence_taken.patient.spec.ts`
   - Done:
@@ -48,7 +48,7 @@
     - [ ] `EXPIRED` for expired/invalid patientSessionToken
     - [ ] `INVALID_ARGUMENT` for malformed fields
 
-- [ ] T004 [P] [US2] Contract test: POST /adherence/taken (family proxy)  
+- [x] T004 [P] [US2] Contract test: POST /adherence/taken (family proxy)  
   - Files:
     - `web-api/tests/contract/adherence_taken.family.spec.ts`
   - Done:
@@ -58,7 +58,7 @@
     - [ ] recordedBy=family + recordedByUserId=familyUserId
     - [ ] duplicate + idempotent replay behavior validated
 
-- [ ] T005 [P] [US3] Contract test: GET /adherence/today  
+- [x] T005 [P] [US3] Contract test: GET /adherence/today  
   - Files:
     - `web-api/tests/contract/adherence_today.spec.ts`
   - Done:
@@ -69,7 +69,7 @@
     - [ ] patient self-only / family linked-only
     - [ ] unlink denies
 
-- [ ] T006 [P] [US4] Contract test: GET /adherence/history  
+- [x] T006 [P] [US4] Contract test: GET /adherence/history  
   - Files:
     - `web-api/tests/contract/adherence_history.spec.ts`
   - Done:
@@ -84,7 +84,7 @@
 ### 1.4 Integration tests (web-api)
 > ここでは “テストを先に書いて落ちる状態” を作る（実装はPhase 2で入れる）
 
-- [ ] T007 [P] [US1] Integration: patient TAKEN end-to-end  
+- [x] T007 [P] [US1] Integration: patient TAKEN end-to-end  
   - Files:
     - `web-api/tests/integration/adherence_taken.patient.spec.ts`
   - Done:
@@ -93,7 +93,7 @@
     - [ ] idempotency replay returns same event
     - [ ] created event reflects in `GET /adherence/today`
 
-- [ ] T008 [P] [US2] Integration: family proxy TAKEN end-to-end  
+- [x] T008 [P] [US2] Integration: family proxy TAKEN end-to-end  
   - Files:
     - `web-api/tests/integration/adherence_taken.family.spec.ts`
   - Done:
@@ -101,7 +101,7 @@
     - [ ] unlink denies (past included)
     - [ ] created event reflects in today/history
 
-- [ ] T009 [P] [US3] Integration: today schedule+events merge  
+- [x] T009 [P] [US3] Integration: today schedule+events merge  
   - Files:
     - `web-api/tests/integration/adherence_today.spec.ts`
   - Done:
@@ -110,7 +110,7 @@
     - [ ] scheduledAt ASC ordering
     - [ ] month marks computed for the month containing requested date
 
-- [ ] T010 [P] [US4] Integration: history paging + cursor binding  
+- [x] T010 [P] [US4] Integration: history paging + cursor binding  
   - Files:
     - `web-api/tests/integration/adherence_history.spec.ts`
   - Done:
