@@ -1,0 +1,276 @@
+openapi: 3.0.3
+info:
+  title: Adherence History API (MVP)
+  version: 0.1.0
+paths:
+  /adherence/taken:
+    post:
+      summary: Create TAKEN adherence event
+      headers:
+        Idempotency-Key:
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdherenceTakenRequest'
+      responses:
+        '200':
+          description: TAKEN created or idempotent replay
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdherenceTakenResponse'
+        '400':
+          description: Invalid argument
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Expired/unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Authorization denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Duplicate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /adherence/today:
+    get:
+      summary: Get today's schedule and events
+      parameters:
+        - in: query
+          name: targetPatientId
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: date
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Today data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdherenceTodayResponse'
+        '400':
+          description: Invalid argument
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Expired/unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Authorization denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /adherence/history:
+    get:
+      summary: Get adherence history in range with pagination
+      parameters:
+        - in: query
+          name: targetPatientId
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: from
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: History data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdherenceHistoryResponse'
+        '400':
+          description: Invalid argument / limit exceeded / invalid cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Expired/unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Authorization denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    AdherenceTakenRequest:
+      type: object
+      required: [medicationId, scheduledAt]
+      properties:
+        targetPatientId:
+          type: string
+          description: Required for family user
+        medicationId:
+          type: string
+        scheduledAt:
+          type: string
+          format: date-time
+    AdherenceTakenResponse:
+      type: object
+      required: [adherenceEventId, status, recordedBy, recordedByUserId, createdAt]
+      properties:
+        adherenceEventId:
+          type: string
+        status:
+          type: string
+          enum: [TAKEN]
+        recordedBy:
+          type: string
+          enum: [patient, family]
+        recordedByUserId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AdherenceTodayResponse:
+      type: object
+      required: [doses, events]
+      properties:
+        doses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dose'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdherenceEvent'
+    AdherenceHistoryResponse:
+      type: object
+      required: [events]
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdherenceEvent'
+        nextCursor:
+          type: string
+          nullable: true
+    Dose:
+      type: object
+      required: [medicationId, scheduledAt]
+      properties:
+        medicationId:
+          type: string
+        scheduledAt:
+          type: string
+          format: date-time
+        slot:
+          type: string
+          enum: [morning, noon, night, bed]
+    AdherenceEvent:
+      type: object
+      required: [adherenceEventId, status, scheduledAt, createdAt]
+      properties:
+        adherenceEventId:
+          type: string
+        status:
+          type: string
+          enum: [TAKEN, MISSED, RESOLVED]
+        scheduledAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        resolvedAt:
+          type: string
+          format: date-time
+          nullable: true
+        recordedBy:
+          type: string
+          enum: [patient, family]
+        recordedByUserId:
+          type: string
+    Error:
+      type: object
+      required: [error_code, message]
+      properties:
+        error_code:
+          type: string
+          enum:
+            - AUTHORIZATION_DENIED
+            - NOT_FOUND
+            - EXPIRED
+            - DUPLICATE
+            - INVALID_ARGUMENT
+            - LIMIT_EXCEEDED
+            - INVALID_CURSOR
+        message:
+          type: string
+        details:
+          type: object
+          nullable: true
